@@ -1,5 +1,3 @@
-const palette = ["#326954", "#3c5873", "#5b4c78", "#725b40", "#3d6369", "#58644b"];
-
 export function layout(items, width, height) {
   items = items.filter(item => Number.isFinite(item.size) && item.size > 0)
     .slice().sort((a, b) => b.size - a.size);
@@ -52,11 +50,28 @@ export function layout(items, width, height) {
   return tiles;
 }
 
+const palette = [
+  ['#7651c3', '#5265c4'],
+  ['#4e67c6', '#356cb9'],
+  ['#8b55b6', '#7057bb'],
+  ['#4457a5', '#4e76bc'],
+  ['#6254a9', '#5671bf'],
+  ['#685cb5', '#4d67aa'],
+];
+
 export function makeTreemap(canvas, label, formatSize, activate, highlight) {
-  const ctx = canvas.getContext("2d");
+  const context = canvas.getContext('2d');
   let items = [];
   let tiles = [];
   let active = null;
+
+  function fitText(text, width) {
+    const characters = Array.from(text);
+    while (characters.length > 1 && context.measureText(characters.join('')).width > width) {
+      characters.splice(-2, 2, '…');
+    }
+    return characters.join('');
+  }
 
   function draw() {
     const { width, height } = canvas.getBoundingClientRect();
@@ -64,75 +79,76 @@ export function makeTreemap(canvas, label, formatSize, activate, highlight) {
     const scale = window.devicePixelRatio || 1;
     canvas.width = Math.round(width * scale);
     canvas.height = Math.round(height * scale);
-    ctx.setTransform(scale, 0, 0, scale, 0, 0);
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--map-bg").trim() || "#171d1e";
-    ctx.fillRect(0, 0, width, height);
-    tiles = items.length ? layout(items, width, height) : [];
-    ctx.font = "500 11px Segoe UI, system-ui, sans-serif";
-    tiles.forEach((tile, index) => {
+    context.setTransform(scale, 0, 0, scale, 0, 0);
+    context.clearRect(0, 0, width, height);
+    tiles = layout(items, width, height);
+    for (const [index, tile] of tiles.entries()) {
       const { item, x, y, width: w, height: h } = tile;
-      if (w < 1 || h < 1) return;
-      ctx.fillStyle = item.id === 0 ? "#34423e" : palette[index % palette.length];
-      ctx.beginPath();
-      ctx.roundRect(x + 2, y + 2, Math.max(0, w - 4), Math.max(0, h - 4), Math.min(5, w / 4, h / 4));
-      ctx.fill();
-      if (tile.item === active) {
-        ctx.strokeStyle = "#c8f8e1";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
+      if (w <= 4 || h <= 4) continue;
+      const colors = palette[index % palette.length];
+      const gradient = context.createLinearGradient(x, y, x + w, y + h);
+      gradient.addColorStop(0, item.id === 0 ? '#626e85' : colors[0]);
+      gradient.addColorStop(1, item.id === 0 ? '#515e75' : colors[1]);
+      context.fillStyle = gradient;
+      context.beginPath();
+      context.roundRect(x + 2, y + 2, w - 4, h - 4, Math.min(9, w / 5, h / 5));
+      context.fill();
+      if (active === item) {
+        context.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+        context.lineWidth = 2;
+        context.stroke();
       }
-      if (w < 42 || h < 25) return;
-      ctx.fillStyle = "#f1f7f3";
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(x + 6, y + 4, w - 12, h - 8);
-      ctx.clip();
-      let title = item.name;
-      while (title.length > 1 && ctx.measureText(title).width > w - 20) title = title.slice(0, -2) + "…";
-      ctx.fillText(title, x + 9, y + 21);
-      if (h >= 46) {
-        ctx.font = "400 10px Segoe UI, system-ui, sans-serif";
-        ctx.fillStyle = "#d4e4db";
-        ctx.fillText(formatSize(item.size), x + 9, y + 38);
-        ctx.font = "500 11px Segoe UI, system-ui, sans-serif";
+      if (w < 76 || h < 40) continue;
+      context.save();
+      context.beginPath();
+      context.rect(x + 10, y + 8, w - 20, h - 16);
+      context.clip();
+      context.fillStyle = '#ffffff';
+      context.font = '650 14px Manrope, sans-serif';
+      context.fillText(fitText(item.name, w - 26), x + 13, y + 26);
+      if (h >= 64) {
+        context.font = '450 13px Manrope, sans-serif';
+        context.fillText(formatSize(item.size), x + 13, y + 48);
       }
-      ctx.restore();
-    });
+      context.restore();
+    }
   }
 
   function locate(event) {
     return tiles.find(({ x, y, width, height }) =>
-      event.offsetX >= x && event.offsetX < x + width
-      && event.offsetY >= y && event.offsetY < y + height)?.item ?? null;
+      event.offsetX >= x && event.offsetX < x + width && event.offsetY >= y && event.offsetY < y + height
+    )?.item ?? null;
   }
 
   function update(item) {
     if (active === item) return;
     active = item;
-    canvas.classList.toggle("interactive", Boolean(item?.id));
-    label.textContent = item ? item.name + " · " + formatSize(item.size) : "Survolez un bloc pour voir son détail.";
-    canvas.title = item ? item.name + " · " + formatSize(item.size) : "";
+    canvas.classList.toggle('interactive', Boolean(item?.id));
+    label.textContent = item ? item.name + ' · ' + formatSize(item.size) : 'Click a folder to open it. Hover over a block to see its size.';
+    canvas.title = item ? item.name + ' · ' + formatSize(item.size) : '';
     highlight(item?.id);
     draw();
   }
 
-  canvas.addEventListener("pointermove", event => update(locate(event)));
-  canvas.addEventListener("pointerleave", () => update(null));
-  canvas.addEventListener("click", event => {
+  canvas.addEventListener('pointermove', event => update(locate(event)));
+  canvas.addEventListener('pointerleave', () => update(null));
+  canvas.addEventListener('click', event => {
     const item = locate(event);
     if (item?.id) activate(item);
   });
   new ResizeObserver(draw).observe(canvas);
-  document.addEventListener("themechange", draw);
+  canvas.closest('details')?.addEventListener('toggle', draw);
+  document.addEventListener('themechange', draw);
+  document.fonts?.ready.then(draw);
 
   return (rows, other) => {
-    items = [...rows, ...(other > 0 ? [{ id: 0, name: "Autres éléments", size: other }] : [])]
-      .filter(item => Number.isFinite(item.size) && item.size > 0);
-    items.sort((a, b) => b.size - a.size);
+    items = [...rows, ...(other > 0 ? [{ id: 0, name: 'Other items', size: other }] : [])]
+      .filter(item => Number.isFinite(item.size) && item.size > 0)
+      .sort((a, b) => b.size - a.size);
     active = null;
-    canvas.classList.remove("interactive");
-    label.textContent = "Survolez un bloc pour voir son détail.";
-    canvas.title = "";
+    canvas.classList.remove('interactive');
+    canvas.title = '';
+    label.textContent = 'Click a folder to open it. Hover over a block to see its size.';
     draw();
   };
 }

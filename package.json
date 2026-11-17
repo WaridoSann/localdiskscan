@@ -3,7 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Interface locale et tests navigateur de Localdisk",
-  "scripts": { "test": "node tests/interface.mjs" },
-  "devDependencies": { "playwright": "1.62.1" }
+  "description": "English interface and browser tests for the Localdisk Windows disk usage analyzer",
+  "scripts": {
+    "test": "node tests/interface.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
 }
