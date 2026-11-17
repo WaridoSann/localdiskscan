@@ -1,68 +1,49 @@
-# Localdisk
+<div align="center">
+  <img src="local_disk_analyzer/web/favicon.svg" width="88" height="88" alt="Logo Localdisk">
+  <h1>Localdisk</h1>
+  <p>Analyse ton disque. Fais de la place.</p>
+  <p>
+    <img src="https://img.shields.io/badge/plateforme-Windows-ACEDD0?style=flat-square&amp;labelColor=26332D" alt="Plateforme Windows">
+    <img src="https://img.shields.io/badge/scan-C%3A%5C-9BBCEE?style=flat-square&amp;labelColor=26332D" alt="Scan de C:\">
+    <img src="https://img.shields.io/badge/donn%C3%A9es-100%25%20locales-B9A7DE?style=flat-square&amp;labelColor=26332D" alt="Données 100 % locales">
+    <img src="https://img.shields.io/badge/interface-fran%C3%A7ais-E2BA82?style=flat-square&amp;labelColor=26332D" alt="Interface en français">
+  </p>
+</div>
 
-Une interface locale pour voir ce qui prend de la place sur votre disque Windows. **Un clic sur « Scanner C:\ » lance l’analyse du disque système, sans choisir de dossier.**
+## Installer l’interface · Windows
 
-Ce dépôt contient la nouvelle interface web à intégrer à l’application LocalDiskAnalyzer existante. Il ne contient pas encore les sources Python du serveur et du moteur d’analyse : l’archive Windows fournie pour cette refonte contenait leur version compilée. Ouvrir simplement `index.html` ne permet donc pas de scanner un disque.
+À coller dans **PowerShell** :
 
-![Écran d’accueil de Localdisk](docs/previews/accueil.png)
-
-## Ce qui change
-
-- Interface en français, thème sombre avec accents menthe et thème clair mémorisé localement.
-- Vue du disque, capacité, espace utilisé et disponible à partir des données du serveur.
-- Compteurs de fichiers, dossiers, taille analysée et durée du scan.
-- Classement des fichiers volumineux, exploration des dossiers et fil d’Ariane.
-- Recherche par nom, filtre par extension et pagination.
-- Carte des tailles interactive : survol pour voir la taille, clic sur un dossier pour l’explorer.
-- Ouverture d’un emplacement dans l’Explorateur et copie du chemin.
-- Annulation, résultats partiels et détails des accès refusés conservés.
-- Adaptation aux petits écrans, aide et raccourci `/` pour la recherche.
-
-Le scan démarre uniquement au clic. Sa cible est fixée à `C:\` dans `app.js`. L’interface n’ajoute aucun CDN ni service tiers et conserve l’authentification Bearer et le jeton local transmis dans le fragment d’URL.
-
-## Intégrer les fichiers à votre projet
-
-Les cinq fichiers à reprendre sont dans [`local_disk_analyzer/web/`](local_disk_analyzer/web/) : `index.html`, `style.css`, `app.js`, `treemap.js` et `favicon.svg`.
-
-Les copier dans le dossier web correspondant du projet Python, généralement `src/local_disk_analyzer/web/` ou `local_disk_analyzer/web/`, puis reconstruire l’application avec sa commande de packaging habituelle. Aucun changement du moteur ou des routes API n’est nécessaire pour cette refonte.
-
-### Avec Codex CLI
-
-Dans le projet local contenant les sources Python, donner cette instruction à Codex CLI :
-
-> Récupère les cinq fichiers de `local_disk_analyzer/web/` de la branche `codex/localdisk-interface` du dépôt `https://github.com/WaridoSann/localdiskscan`. Intègre-les dans le dossier web existant de mon projet LocalDiskAnalyzer en conservant son moteur Python et ses routes API. Lance les vérifications du projet et reconstruis la distribution Windows avec la commande de packaging déjà présente.
-
-La branche dédiée peut aussi être récupérée avec :
-
-```shell
-git clone --branch codex/localdisk-interface https://github.com/WaridoSann/localdiskscan.git localdisk-interface
+```powershell
+& {
+    $localdiskApp = (Read-Host "Dossier contenant LocalDiskAnalyzer.exe").Trim().Trim('"')
+    $localdiskWeb = Join-Path $localdiskApp "_internal\local_disk_analyzer\web"
+    if (!(Test-Path "$localdiskApp\LocalDiskAnalyzer.exe") -or !(Test-Path $localdiskWeb)) { throw "Indique le dossier de l’application extraite." }
+    $localdiskTemp = Join-Path $env:TEMP ("localdisk-" + [guid]::NewGuid())
+    New-Item $localdiskTemp -ItemType Directory -ErrorAction Stop | Out-Null
+    Invoke-WebRequest "https://github.com/WaridoSann/localdiskscan/archive/refs/heads/main.zip" -OutFile "$localdiskTemp\interface.zip" -ErrorAction Stop
+    Expand-Archive "$localdiskTemp\interface.zip" -DestinationPath $localdiskTemp -ErrorAction Stop
+    Copy-Item $localdiskWeb "$localdiskWeb.backup-$([guid]::NewGuid())" -Recurse -ErrorAction Stop
+    Copy-Item "$localdiskTemp\localdiskscan-main\local_disk_analyzer\web\*" $localdiskWeb -Force -ErrorAction Stop
+    Start-Process "$localdiskApp\LocalDiskAnalyzer.exe" -ErrorAction Stop
+}
 ```
 
-### Mettre à jour une distribution Windows existante
+Clique sur **Scanner C:\**.
 
-1. Fermer LocalDiskAnalyzer.
-2. Sauvegarder le dossier `LocalDiskAnalyzer/_internal/local_disk_analyzer/web/` de l’application extraite.
-3. Y copier les cinq fichiers de ce dépôt, en remplaçant les anciens fichiers web.
-4. Relancer `LocalDiskAnalyzer/LocalDiskAnalyzer.exe` et utiliser le nouvel onglet ouvert par l’application.
+## Aperçu
 
-Le dossier `_internal` doit rester à côté de l’exécutable. Des paramètres de version sur les fichiers web évitent de réutiliser l’ancienne interface en cache.
-
-## Aperçus
-
-Les captures de résultats ci-dessous utilisent des **données fictives de test**, pas un scan de votre ordinateur. Ces données ne sont pas intégrées à l’interface livrée.
-
-![Classement des fichiers et carte des tailles](docs/previews/fichiers.png)
+![Localdisk](docs/previews/fichiers.png)
 
 <details>
-<summary>Voir le thème clair</summary>
+<summary>Infos utiles</summary>
 
-![Thème clair](docs/previews/theme-clair.png)
+- Ferme LocalDiskAnalyzer avant l’installation. Une sauvegarde du dossier web est créée automatiquement.
+- Ces commandes mettent à jour une application **LocalDiskAnalyzer déjà extraite**. Ce dépôt fournit l’interface ; il ne contient pas encore le moteur Python ni l’exécutable Windows.
+- Aucun fichier n’est supprimé. Les tailles sont logiques ; les dossiers incluent leurs sous-dossiers.
+- L’aperçu utilise des données fictives. Les tests navigateur utilisent une API simulée ; le binaire Windows reste à tester sur ton PC.
 
-</details>
-
-## Tests navigateur
-
-Prérequis : Node.js 20 ou plus récent.
+**Développement — Node.js 20+ :**
 
 ```shell
 npm ci
@@ -70,22 +51,6 @@ npx playwright install chromium
 npm test
 ```
 
-Pour utiliser un Chromium déjà installé sous Linux :
+Références : [WinDirStat](https://github.com/windirstat/windirstat) · [gdu](https://github.com/dundee/gdu).
 
-```shell
-CHROMIUM_PATH=/usr/bin/chromium npm test
-```
-
-Les tests démarrent un serveur statique sur `127.0.0.1:8765` et simulent les réponses de l’API locale. Ils vérifient le scan de `C:\`, la session, la progression, l’annulation, les résultats partiels, la navigation par dossier et par carte, la recherche, la pagination, l’ouverture d’un emplacement, la copie du chemin, l’aide, le thème clair, les erreurs et la fermeture. Ils vérifient aussi les noms de fichiers rendus comme texte, la géométrie de la carte et l’absence de débordement horizontal à huit largeurs entre 320 et 1920 pixels.
-
-Les captures et le rapport de test sont enregistrés dans `test-results/`, ignoré par Git.
-
-L’exécution du binaire Windows et l’ouverture effective de l’Explorateur n’ont pas été testées dans l’environnement Linux de préparation. Les tests navigateur ne remplacent pas un essai de la distribution sur Windows.
-
-## Lecture des tailles
-
-Les tailles recensées sont logiques et peuvent différer de l’occupation du volume. Les dossiers incluent leurs sous-dossiers et ne s’additionnent pas. Les erreurs de lecture et les liens ou éléments spéciaux ignorés restent signalés dans les détails du scan. L’interface ne propose aucune suppression de fichier.
-
-## Références
-
-[WinDirStat](https://github.com/windirstat/windirstat) et [gdu](https://github.com/dundee/gdu) ont servi de références fonctionnelles pour les classements et la navigation. Aucun code de ces dépôts n’a été repris. L’algorithme de carte de l’application fournie a été conservé, avec des ajustements de rendu et de gestion des tailles nulles.
+</details>
