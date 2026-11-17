@@ -1,0 +1,68 @@
+name: Publier l'application Windows
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - distribution/windows/**
+      - .github/workflows/publish-windows.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: localdisk-windows-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer les fichiers
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Reconstituer et vérifier le paquet Windows
+        shell: python
+        run: |
+          import hashlib
+          import json
+          import shutil
+          from pathlib import Path
+          from zipfile import ZipFile
+
+          source = Path('distribution/windows')
+          manifest = json.loads((source / 'manifest.json').read_text())
+          output = Path('release')
+          output.mkdir(exist_ok=True)
+          archive = output / manifest['filename']
+          with archive.open('wb') as target:
+              for part in manifest['parts']:
+                  with (source / part).open('rb') as stream:
+                      shutil.copyfileobj(stream, target)
+          assert archive.stat().st_size == manifest['size'], 'Taille incorrecte'
+          actual = hashlib.sha256(archive.read_bytes()).hexdigest()
+          assert actual == manifest['sha256'], 'Empreinte SHA-256 incorrecte'
+          with ZipFile(archive) as package:
+              assert package.testzip() is None, 'Archive endommagée'
+              package.getinfo('LocalDiskAnalyzer/LocalDiskAnalyzer.exe')
+              package.getinfo('LocalDiskAnalyzer/_internal/python313.dll')
+          (output / 'SHA256SUMS.txt').write_text(actual + '  ' + archive.name + '\n')
+          print('Paquet Windows vérifié :', archive.name, archive.stat().st_size, 'octets')
+
+      - name: Publier le téléchargement
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          tag="windows-${GITHUB_SHA:0:7}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" release/LocalDiskAnalyzer-win-x64.zip release/SHA256SUMS.txt --clobber
+          else
+            gh release create "$tag" release/LocalDiskAnalyzer-win-x64.zip release/SHA256SUMS.txt \
+              --target "$GITHUB_SHA" \
+              --title "Localdisk — Windows 64 bits (aperçu)" \
+              --prerelease \
+              --notes "Téléchargez LocalDiskAnalyzer-win-x64.zip, faites Extraire tout, puis ouvrez LocalDiskAnalyzer/LocalDiskAnalyzer.exe. Aucun Git, Python ou Node.js nécessaire. L'application démarre son serveur local. Le paquet reprend le moteur compilé fourni et la nouvelle interface. L'exécutable n'a pas été exécuté sous Windows dans l'environnement de préparation."
+          fi
