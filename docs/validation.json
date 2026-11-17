@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "checks": [
+    "C:\\ fixé sans sélecteur ni scan automatique",
+    "jeton de session et authentification",
+    "scan et polling",
+    "annulation et résultats partiels",
+    "pagination",
+    "navigation et fil d’Ariane",
+    "recherche et filtres",
+    "ouverture emplacement",
+    "noms de fichier échappés",
+    "thème clair persistant",
+    "aide et clavier",
+    "8 largeurs sans débordement",
+    "erreur du scan et session expirée",
+    "fermeture et suppression du jeton",
+    "géométrie treemap"
+  ],
+  "apiCalls": 29,
+  "browserErrors": []
+}
