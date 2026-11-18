@@ -2,7 +2,7 @@
   <img src="local_disk_analyzer/web/favicon.svg" width="80" height="80" alt="Localdisk logo">
   <h1>Localdisk</h1>
   <p>
-    <a href="https://github.com/WaridoSann/localdiskscan/releases/download/windows-a751b29/LocalDiskAnalyzer-win-x64.zip"><img src="https://img.shields.io/badge/DOWNLOAD-Windows%2064--bit-7351D5?style=for-the-badge&amp;labelColor=273452" alt="Download Localdisk for Windows 64-bit"></a>
+    <a href="https://github.com/WaridoSann/localdiskscan/releases/download/windows-2402fa6/LocalDiskAnalyzer-win-x64.zip"><img src="https://img.shields.io/badge/DOWNLOAD-Windows%2064--bit-7351D5?style=for-the-badge&amp;labelColor=273452" alt="Download Localdisk for Windows 64-bit"></a>
   </p>
   <p>
     <img src="https://img.shields.io/badge/platform-Windows%20x64-7351D5?style=flat-square&amp;labelColor=273452" alt="Windows x64">
@@ -14,7 +14,7 @@ Localdisk is a portable Windows tool that scans your drive to show which files a
 
 ## Install
 
-1. Click **[Download for Windows 64-bit](https://github.com/WaridoSann/localdiskscan/releases/download/windows-a751b29/LocalDiskAnalyzer-win-x64.zip)** or the download button above.
+1. Click **[Download for Windows 64-bit](https://github.com/WaridoSann/localdiskscan/releases/download/windows-2402fa6/LocalDiskAnalyzer-win-x64.zip)** or the download button above.
 2. In **Downloads**, right-click **LocalDiskAnalyzer-win-x64.zip** → **Extract all…** → **Extract**.
 3. Open the extracted folder, open **LocalDiskAnalyzer**, then double-click **LocalDiskAnalyzer.exe**.
 
@@ -75,6 +75,6 @@ This preview has not been executed on Windows in the preparation environment. Br
 
 ### Font and references
 
-The bundled Manrope font is licensed under the [SIL Open Font License](local_disk_analyzer/web/fonts/OFL.txt). [WinDirStat](https://github.com/windirstat/windirstat) and [gdu](https://github.com/dundee/gdu) were functional references; their code was not copied.
+The bundled IBM Plex Sans font is licensed under the [SIL Open Font License](local_disk_analyzer/web/fonts/OFL.txt). [WinDirStat](https://github.com/windirstat/windirstat) and [gdu](https://github.com/dundee/gdu) were functional references; their code was not copied.
 
 </details>
