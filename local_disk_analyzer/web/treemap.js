@@ -104,10 +104,10 @@ export function makeTreemap(canvas, label, formatSize, activate, highlight) {
       context.rect(x + 10, y + 8, w - 20, h - 16);
       context.clip();
       context.fillStyle = '#ffffff';
-      context.font = '650 14px Manrope, sans-serif';
+      context.font = '600 14px "IBM Plex Sans", sans-serif';
       context.fillText(fitText(item.name, w - 26), x + 13, y + 26);
       if (h >= 64) {
-        context.font = '450 13px Manrope, sans-serif';
+        context.font = '400 13px "IBM Plex Sans", sans-serif';
         context.fillText(formatSize(item.size), x + 13, y + 48);
       }
       context.restore();

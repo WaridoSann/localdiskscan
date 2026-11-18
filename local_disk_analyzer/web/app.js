@@ -1,4 +1,4 @@
-import { makeTreemap } from './treemap.js?v=3';
+import { makeTreemap } from './treemap.js?v=4';
 
 const $ = id => document.getElementById(id);
 const SCAN_ROOT = 'C:\\';
@@ -527,7 +527,7 @@ $('quit').addEventListener('click', async () => {
     clearTimeout(pollTimer);
     try { sessionStorage.removeItem('disk-session'); } catch { /* No stored session. */ }
     const message = document.createElement('section');
-    message.className = 'card';
+    message.className = 'section closed-state';
     const title = document.createElement('h1');
     title.textContent = 'Localdisk is closed.';
     const description = document.createElement('p');

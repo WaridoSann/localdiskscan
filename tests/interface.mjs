@@ -139,7 +139,7 @@ try {
   assert.equal(calls.filter(call => call.endpoint === '/scan').length, 0);
   assert.equal(new URL(page.url()).hash, '');
   assert.equal(await page.evaluate(() => sessionStorage.getItem('disk-session')), 'test-session-token');
-  assert.ok(await page.evaluate(() => document.fonts.check('650 16px Manrope')));
+  assert.ok(await page.evaluate(() => document.fonts.check('600 17px "IBM Plex Sans"')));
   assert.ok(await page.evaluate(() => parseFloat(getComputedStyle(document.body).fontSize) >= 17));
   assert.ok(!/How it works|Rescan|Your space|Make room|Workspace/i.test(await page.locator('body').innerText()));
   await page.screenshot({ path: path.join(output, 'idle.png'), fullPage: true });
@@ -309,7 +309,7 @@ try {
 
   const report = {
     passed: true,
-    checks: ['English interface without slogans or tabs', 'Vertical drive, metrics, files, and explorer layout', 'Local Manrope font under production CSP', 'C drive scan with session authentication', 'Largest-file Show more across API pages', 'Independent folder navigation and size map', 'Folder pagination across the 100-row API boundary', 'Search, filters, and 250-result cap', 'Clipboard and Explorer action requests', 'HTML-like filenames rendered as text', 'Persistent light and dark themes', 'Eight responsive widths without overflow', 'Failed request recovery', 'Stale response isolation after a new scan', 'Cancellation with both partial result sections', 'Permission guidance and English diagnostics', 'Session expiry and Quit', 'Treemap geometry'],
+    checks: ['English interface without slogans or tabs', 'Vertical drive, metrics, files, and explorer layout', 'Local IBM Plex Sans font under production CSP', 'C drive scan with session authentication', 'Largest-file Show more across API pages', 'Independent folder navigation and size map', 'Folder pagination across the 100-row API boundary', 'Search, filters, and 250-result cap', 'Clipboard and Explorer action requests', 'HTML-like filenames rendered as text', 'Persistent light and dark themes', 'Eight responsive widths without overflow', 'Failed request recovery', 'Stale response isolation after a new scan', 'Cancellation with both partial result sections', 'Permission guidance and English diagnostics', 'Session expiry and Quit', 'Treemap geometry'],
     apiCalls: calls.length,
     browserErrors,
     externalRequests,

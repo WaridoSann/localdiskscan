@@ -3,7 +3,7 @@
   "checks": [
     "English interface without slogans or tabs",
     "Vertical drive, metrics, files, and explorer layout",
-    "Local Manrope font under production CSP",
+    "Local IBM Plex Sans font under production CSP",
     "C drive scan with session authentication",
     "Largest-file Show more across API pages",
     "Independent folder navigation and size map",

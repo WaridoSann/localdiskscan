@@ -78,7 +78,7 @@ def main():
     web_root = PROJECT / 'local_disk_analyzer' / 'web'
     web_files = {file.relative_to(web_root).as_posix(): file.read_bytes()
                  for file in sorted(web_root.rglob('*')) if file.is_file()}
-    for required in ('index.html', 'app.js', 'style.css', 'treemap.js', 'fonts/Manrope.ttf', 'fonts/OFL.txt'):
+    for required in ('index.html', 'app.js', 'style.css', 'treemap.js', 'fonts/IBMPlexSans.ttf', 'fonts/OFL.txt'):
         if required not in web_files:
             raise ValueError('Missing web asset: ' + required)
     archive = output / 'LocalDiskAnalyzer-win-x64.zip'

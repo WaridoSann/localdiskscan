@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <title>Localdisk</title>
-  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=3">
-  <link rel="preload" href="/assets/fonts/Manrope.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="/assets/style.css?v=3">
-  <script type="module" src="/assets/app.js?v=3"></script>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=4">
+  <link rel="preload" href="/assets/fonts/IBMPlexSans.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="/assets/style.css?v=4">
+  <script type="module" src="/assets/app.js?v=4"></script>
 </head>
 <body>
   <svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -42,9 +42,9 @@
   <main id="main" class="page-width" tabindex="-1">
     <p id="notice" class="notice" role="alert" hidden></p>
 
-    <section id="drive" class="card drive" aria-labelledby="drive-title">
+    <section id="drive" class="section drive" aria-labelledby="drive-title">
       <div class="section-heading">
-        <div class="drive-heading"><span class="section-icon"><svg class="icon"><use href="#i-drive"/></svg></span><h1 id="drive-title">Local disk <span id="volume-root" class="path-chip">C:\</span></h1></div>
+        <div class="drive-heading"><h1 id="drive-title">Local disk <span id="volume-root" class="path-chip">C:\</span></h1></div>
         <form id="scan-form" class="scan-actions">
           <button id="cancel" class="button secondary" type="button" hidden>Stop scan</button>
           <button id="scan" class="button primary" type="submit" disabled><svg class="icon"><use href="#i-scan"/></svg><span id="scan-label">Scan C:\</span></button>
@@ -54,7 +54,7 @@
       <div class="storage-summary">
         <div class="used-heading"><strong id="used-percent">—</strong><span id="used-caption">used</span></div>
         <div id="usage-bar" class="usage-bar" role="progressbar" aria-label="Disk space used" aria-valuemin="0" aria-valuemax="100" aria-valuetext="Not measured yet"><span></span></div>
-        <p class="storage-values"><span><strong id="used">—</strong> used</span><span class="value-divider">·</span><span><strong id="available">—</strong> free</span><span class="value-divider">·</span><span><strong id="capacity">—</strong> total</span></p>
+        <dl class="storage-values"><div><dt>Used</dt><dd id="used">—</dd></div><div><dt>Free</dt><dd id="available">—</dd></div><div><dt>Capacity</dt><dd id="capacity">—</dd></div></dl>
       </div>
 
       <div class="scan-summary"><span id="state" class="state" data-state="idle" role="status">Ready</span><span id="elapsed">No scan yet</span></div>
@@ -71,7 +71,7 @@
       </details>
     </section>
 
-    <section id="largest-section" class="card results-section" aria-labelledby="largest-title">
+    <section id="largest-section" class="section results-section" aria-labelledby="largest-title">
       <div class="section-heading"><h2 id="largest-title">Largest files</h2><span id="file-total" class="count-label"></span></div>
       <p id="files-empty" class="empty-message">Scan C:\ to find the largest files.</p>
       <div id="files-content" hidden>
@@ -85,12 +85,12 @@
         <div id="file-results" aria-busy="false">
           <table class="file-table"><thead><tr><th scope="col">Name</th><th scope="col" class="size" aria-sort="descending">Size ↓</th><th scope="col" class="actions-column"><span class="sr-only">Actions</span></th></tr></thead><tbody id="file-rows"></tbody></table>
           <p id="files-no-rows" class="empty-message" hidden>No matching files.</p>
-          <div class="show-more-row"><button id="show-more" class="button show-more" type="button" hidden>Show more<svg class="icon"><use href="#i-down"/></svg></button><span id="file-limit" class="result-caption" hidden></span></div>
+          <div class="show-more-row"><button id="show-more" class="button show-more" type="button" hidden>Show more</button><span id="file-limit" class="result-caption" hidden></span></div>
         </div>
       </div>
     </section>
 
-    <section id="explorer-section" class="card results-section" aria-labelledby="explorer-title">
+    <section id="explorer-section" class="section results-section" aria-labelledby="explorer-title">
       <div class="section-heading"><h2 id="explorer-title">Explore folders</h2><span id="folder-total" class="count-label"></span></div>
       <p id="folders-empty" class="empty-message">Folder contents will appear after the scan.</p>
       <div id="folder-content" hidden>
